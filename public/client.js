@@ -17,11 +17,16 @@ function handler () {
   pending.then((resp) => {
     setOutput(resp.data.output)
   })
+  pending.catch((error) => {
+    setOutput(error.toString(), false)
+  })
 }
 
-function setOutput (str) {
+function setOutput (str, clear = true) {
   eOutput.innerHTML = str
-  eInput.value = ""
+  if (clear) {
+    eInput.value = ""
+  }
 }
 
 setOutput("Enter text to capitalize.")

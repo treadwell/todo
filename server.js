@@ -12,7 +12,12 @@ app.get("/hello", (req, res) => {
 
 app.post("/capitalize", (req, res) => {
   console.log(req.body)
-  res.send({ output: req.body.text.toUpperCase() })
+  if (Math.random() <= 0.9) {
+    res.send({ output: req.body.text.toUpperCase() })
+  } else {
+    res.status(500)
+    res.end()
+  }
 })
 
 app.listen(3000)
