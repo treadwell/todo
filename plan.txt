@@ -1,0 +1,29 @@
+# steps
+
+- install node, npm
+- create node project
+- add to git
+- install express with npm
+- write ping route and hit from browser
+
+- write capitalize text
+  - put text on screen
+  - send to server
+  - server capitalizes
+  - sends back and rerender
+
+- implement to-do app
+  - server
+    - initialize empty list
+    - add get-todos route
+      - gets list
+      - handles empty list gracefully
+    - add add-todo route
+      - submit appends text to list
+      - returns the list
+  - client
+    - call get-todos route to load list
+    - change output div to error p
+    - add ul / li for to-dos
+    - on submit call add-todo route
+    - rerender
