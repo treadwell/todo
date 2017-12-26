@@ -3,7 +3,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 
 const app = express()
-const todos = []
+const TODOS = 'public/todos.json'
 
 app.use(bodyParser.json())
 app.use("/", express.static("public"))
@@ -23,23 +23,67 @@ app.post("/capitalize", (req, res) => {
   }
 })
 
-app.get("/get-todos", (req, res) => {
-  res.send(todos)
-})
+app.get("/get-todos", (req, res) =>
+  modify()
+    .then(send(res)))
 
-app.post("/add-todo", (req, res) => {
-  todos.push(req.body)
-  res.send(todos)
-})
+app.post("/add-todo", (req, res) =>
+  modify(addTodo(req.body))
+    .then(send(res)))
 
-app.post("/delete-todo", (req, res) => {
-  todos.splice(req.body.index, 1)
-  res.send(todos)
-})
+app.post("/delete-todo", (req, res) =>
+  modify(deleteTodo(req.body.index))
+    .then(send(res)))
 
-app.post("/complete-todo", (req, res) => {
-  todos[req.body.index].complete = !todos[req.body.index].complete
-  res.send(todos)
-})
+app.post("/complete-todo", (req, res) =>
+  modify(completeTodo(req.body.index))
+    .then(send(res)))
 
 app.listen(3000)
+
+function addTodo (newTodo) {
+  return todos => todos.push(newTodo)
+}
+
+function deleteTodo (index) {
+  return todos => todos.splice(index, 1)
+}
+
+function completeTodo (index) {
+  return todos => todos[index].complete = !todos[index].complete
+}
+
+function send (res) {
+  return todos => res.send(todos)
+}
+
+function modify (fn) {
+  return fn
+    ? modifyTodos(fn)
+    : readTodos()
+}
+
+function modifyTodos (fn) {
+  return readTodos()
+    .then(wrap(fn))
+    .then(writeTodos)
+}
+
+function wrap (fn) {
+  return todos => {
+    fn(todos)
+    return todos
+  }
+}
+
+function readTodos () {
+  return new Promise((resolve) =>
+    fs.readFile(TODOS, (err, contents) =>
+      resolve(err ? [] : JSON.parse(contents))))
+}
+
+function writeTodos (todos) {
+  return new Promise((resolve, reject) =>
+    fs.writeFile(TODOS, JSON.stringify(todos), (err) =>
+      err ? reject(err) : resolve(todos)))
+}
