@@ -18,46 +18,46 @@ function handleAdd () {
     .then(resp => setOutput(resp.data))
 }
 
-function handleDelete (idx) {
+function handleDelete (todoId) {
   axios
-    .post('/delete-todo', { index: idx })
+    .post('/delete-todo', { todoId: todoId })
     .then(resp => setOutput(resp.data))
 }
 
-function handleComplete (idx) {
+function handleComplete (todoId) {
   axios
-    .post('/complete-todo', { index: idx })
+    .post('/complete-todo', { todoId: todoId })
     .then(resp => setOutput(resp.data))
 }
 
 function setOutput (list) {
   eInput.value = ''
   eList.innerHTML = list
-    .map(vItem)
+    .map(vTodo)
     .join('')
 }
 
-function vItem (item, idx) {
+function vTodo (todo) {
   return `<li>
-    ${vItemText(item)}
-    ${vItemDelete(idx)}
-    ${vItemComplete(item, idx)}
+    ${vTodoText(todo)}
+    ${vTodoDelete(todo)}
+    ${vTodoComplete(todo)}
   </li>`
 }
 
-function vItemText (item) {
-  return `<span style="text-decoration: ${ item.complete ? 'line-through' : '' }">
-    ${item.text}
+function vTodoText (todo) {
+  return `<span style="text-decoration: ${ todo.complete ? 'line-through' : '' }">
+    ${todo.text}
   </span>`
 }
 
-function vItemDelete (idx) {
-  return `<button onclick="handleDelete(${idx})">Delete</button>`
+function vTodoDelete (todo) {
+  return `<button onclick="handleDelete(${todo._id})">Delete</button>`
 }
 
-function vItemComplete (item, idx) {
-  const label = item.complete ? 'Open' : 'Done'
-  return `<button onclick="handleComplete(${idx})">Mark ${label}</button>`
+function vTodoComplete (todo) {
+  const label = todo.complete ? 'Open' : 'Done'
+  return `<button onclick="handleComplete(${todo._id})">Mark ${label}</button>`
 }
 
 axios

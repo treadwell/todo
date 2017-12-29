@@ -27,3 +27,7 @@
     - add ul / li for to-dos
     - on submit call add-todo route
     - rerender
+
+- implement database
+  - install mongo
+  - change server APIs
