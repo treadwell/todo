@@ -52,12 +52,12 @@ function vTodoText (todo) {
 }
 
 function vTodoDelete (todo) {
-  return `<button onclick="handleDelete(${todo._id})">Delete</button>`
+  return `<button onclick="handleDelete('${todo._id}')">Delete</button>`
 }
 
 function vTodoComplete (todo) {
   const label = todo.complete ? 'Open' : 'Done'
-  return `<button onclick="handleComplete(${todo._id})">Mark ${label}</button>`
+  return `<button onclick="handleComplete('${todo._id}')">Mark ${label}</button>`
 }
 
 axios

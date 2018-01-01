@@ -1,13 +1,14 @@
 const mongo = require("mongodb")
 const express = require("express")
 const bodyParser = require("body-parser")
+const ObjectId = mongo.ObjectId
 
-// FIXME: Use 'mongodb' v2.2.30. Currently we have v3.0.1
-mongo.MongoClient.connect('mongodb://127.0.0.1:27017/todoapp')
+mongo.MongoClient.connect('mongodb://127.0.0.1:27017')
   .catch(err => console.log(`There was an error connecting: ${err.getMessage()}`))
-  .then(db => {
+  .then(client => {
 
     const app = express()
+    const db = client.db("todoapp")
     const Todos = db.collection('todos')
 
     app.use(bodyParser.json())
@@ -34,25 +35,24 @@ mongo.MongoClient.connect('mongodb://127.0.0.1:27017/todoapp')
 
     app.post("/add-todo", (req, res) =>
       Todos.insert(req.body)
-        .then(getTodoArray())
+        .then(() => getTodoArray())
         .then(send(res)))
 
     app.post("/delete-todo", (req, res) =>
-      Todos.deleteOne({ _id: req.body.todoId })
-        .then(getTodoArray())
+      Todos.deleteOne({ _id: new ObjectId(req.body.todoId) })
+        .then(() => getTodoArray())
         .then(send(res)))
 
     app.post("/complete-todo", (req, res) =>
-      Todos.findOne({ _id: req.body.todoId })
-        .then(todo => Todos.updateOne({ _id: req.body.todoId }, { $set: { complete: !todo.complete } }))
-        .then(getTodoArray())
+      Todos.findOne({ _id: new ObjectId(req.body.todoId) })
+        .then(todo => Todos.updateOne({ _id: new ObjectId(req.body.todoId) }, { $set: { complete: !todo.complete } }))
+        .then(() => getTodoArray())
         .then(send(res)))
 
     app.listen(3000)
 
     function getTodoArray () {
-      return Todos.find()
-        .then(cursor => cursor.toArray())
+      return Todos.find().toArray()
     }
 
     function send (res) {
